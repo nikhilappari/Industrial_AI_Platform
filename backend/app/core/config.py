@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 import os
 
 class Settings(BaseSettings):
-    app_name: str = "Industrial Camera Safety Monitor"
+    app_name: str = "Industrial AI & Operations Platform"
     app_env: str = "development"
     database_url: str = "sqlite:///./safety_monitor.db"
     secret_key: str = "dev-secret-key-change-in-production"

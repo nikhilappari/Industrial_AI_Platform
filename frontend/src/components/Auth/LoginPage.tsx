@@ -12,7 +12,12 @@ import {
   Building2, 
   HardHat, 
   Sparkles,
-  CheckCircle2
+  CheckCircle2,
+  Scan,
+  Car,
+  Wrench,
+  Zap,
+  Cpu
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
@@ -53,7 +58,7 @@ export const LoginPage: React.FC = () => {
         err?.response?.data?.detail ||
         (err?.response?.status === 401
           ? 'Invalid username or password'
-          : 'Unable to connect to the safety server. Please ensure the backend is running.');
+          : 'Unable to connect to the platform server. Please ensure the backend is running.');
       setError(message);
     } finally {
       setIsSubmitting(false);
@@ -78,31 +83,50 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex flex-col justify-center items-center p-4 sm:p-6 text-white select-none">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col justify-center items-center p-4 sm:p-6 text-white select-none relative overflow-hidden">
       {/* Background ambient decorative glows */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-md relative z-10">
+      <div className="w-full max-w-lg relative z-10">
         {/* Brand / Logo Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center p-3 bg-gradient-to-b from-cyan-500/20 to-slate-800/80 border border-cyan-500/30 rounded-2xl shadow-lg shadow-cyan-950/50 mb-4 backdrop-blur-md">
-            <Shield className="w-10 h-10 text-cyan-400" />
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center p-3.5 bg-gradient-to-b from-cyan-500/20 to-slate-800/80 border border-cyan-500/30 rounded-2xl shadow-lg shadow-cyan-950/50 mb-3 backdrop-blur-md">
+            <Cpu className="w-10 h-10 text-cyan-400" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center justify-center gap-2">
-            Industrial Safety Monitor
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center justify-center gap-2">
+            Industrial AI & Operations Platform
           </h1>
-          <p className="text-xs text-cyan-400/80 uppercase tracking-widest font-semibold mt-1">
-            AI-Powered PPE & Zone Surveillance
+          <p className="text-xs text-cyan-400/90 font-semibold mt-1 tracking-wide">
+            Unified Multi-Module Suite · Safety, Quality, Fleet & Machinery Intelligence
           </p>
+
+          {/* Module Pill Tags */}
+          <div className="flex flex-wrap items-center justify-center gap-1.5 mt-3">
+            {[
+              { label: 'PPE Safety', icon: Shield },
+              { label: 'DefectVision', icon: Scan },
+              { label: 'Fleet OBD-II', icon: Car },
+              { label: 'Burn-In QA', icon: Zap },
+              { label: 'Predictive Maint.', icon: Wrench },
+            ].map((mod) => (
+              <span
+                key={mod.label}
+                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-slate-800/80 text-slate-300 border border-slate-700/80"
+              >
+                <mod.icon className="w-3 h-3 text-cyan-400" />
+                {mod.label}
+              </span>
+            ))}
+          </div>
         </div>
 
         {/* Login Form Card */}
         <div className="bg-slate-900/90 border border-slate-800 backdrop-blur-xl rounded-2xl p-6 sm:p-8 shadow-2xl shadow-black/80">
-          <div className="mb-6">
-            <h2 className="text-xl font-semibold text-white">Sign In</h2>
-            <p className="text-xs text-slate-400 mt-1">
-              Enter your credentials to access the safety monitoring portal
+          <div className="mb-5">
+            <h2 className="text-lg font-semibold text-white">Platform Sign In</h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Enter your authorized credentials to access the unified operations suite
             </p>
           </div>
 
@@ -167,7 +191,7 @@ export const LoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-medium rounded-lg shadow-md shadow-cyan-950 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-60 cursor-pointer"
+              className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 text-white font-semibold rounded-lg shadow-md shadow-cyan-950 transition-all flex items-center justify-center gap-2 text-sm disabled:opacity-60 cursor-pointer"
             >
               {isSubmitting ? (
                 <>
@@ -176,18 +200,18 @@ export const LoginPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <span>Sign In to Dashboard</span>
+                  <span>Enter Operations Portal</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Quick Login Presets */}
+          {/* Quick Demo Accounts */}
           <div className="mt-6 pt-5 border-t border-slate-800">
             <div className="flex items-center gap-2 mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Or click to test with demo accounts</span>
+              <span>Quick Demo Access Roles</span>
             </div>
 
             <div className="space-y-2">
@@ -195,25 +219,25 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 onClick={() => handleQuickLogin('admin', 'admin123')}
                 disabled={isSubmitting}
-                className="w-full text-left p-3 rounded-lg border border-amber-800/40 bg-amber-950/20 hover:bg-amber-950/40 hover:border-amber-600/70 transition-all group flex items-center justify-between"
+                className="w-full text-left p-3 rounded-lg border border-slate-700/70 bg-slate-800/40 hover:bg-slate-800/80 hover:border-cyan-500/70 transition-all group flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-md bg-amber-950/60 border border-amber-800 text-amber-400">
-                    <HardHat className="w-4 h-4" />
+                  <div className="p-2 rounded-md bg-cyan-950/60 border border-cyan-800 text-cyan-400">
+                    <Shield className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-amber-300 group-hover:text-amber-200">
-                      Titan Hardware & Heavy Fabrication
+                    <div className="text-xs font-semibold text-slate-200 group-hover:text-cyan-300">
+                      Operations Director / System Admin
                     </div>
-                    <div className="text-[11px] text-amber-200/70 font-medium mt-0.5">
-                      Required PPE: ⛑️ Hardhat + 🦺 Safety Vest
+                    <div className="text-[11px] text-slate-400 font-medium mt-0.5">
+                      Full access to all 5 AI modules + Administration
                     </div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">
+                    <div className="text-[10px] text-slate-500 mt-0.5">
                       User: <code className="text-cyan-300 font-mono">admin</code> • Pass: <code className="text-cyan-300 font-mono">admin123</code>
                     </div>
                   </div>
                 </div>
-                <span className="text-[11px] text-amber-400 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
+                <span className="text-[11px] text-cyan-400 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
                   Log in <ArrowRight className="w-3 h-3" />
                 </span>
               </button>
@@ -222,21 +246,21 @@ export const LoginPage: React.FC = () => {
                 type="button"
                 onClick={() => handleQuickLogin('pharma_officer', 'pharma123')}
                 disabled={isSubmitting}
-                className="w-full text-left p-3 rounded-lg border border-emerald-800/40 bg-emerald-950/20 hover:bg-emerald-950/40 hover:border-emerald-600/70 transition-all group flex items-center justify-between"
+                className="w-full text-left p-3 rounded-lg border border-slate-700/70 bg-slate-800/40 hover:bg-slate-800/80 hover:border-emerald-500/70 transition-all group flex items-center justify-between"
               >
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-md bg-emerald-950/60 border border-emerald-800 text-emerald-400">
                     <Building2 className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="text-xs font-semibold text-emerald-300 group-hover:text-emerald-200">
-                      BioHealth Pharma Labs Cleanroom
+                    <div className="text-xs font-semibold text-slate-200 group-hover:text-emerald-300">
+                      Safety & Cleanroom QA Inspector
                     </div>
-                    <div className="text-[11px] text-emerald-200/70 font-medium mt-0.5">
-                      Required PPE: 😷 Face Mask + 🧤 Sterile Gloves
+                    <div className="text-[11px] text-slate-400 font-medium mt-0.5">
+                      Pharma Cleanroom tenant profile (Mask + Gloves)
                     </div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">
-                      User: <code className="text-cyan-300 font-mono">pharma_officer</code> • Pass: <code className="text-cyan-300 font-mono">pharma123</code>
+                    <div className="text-[10px] text-slate-500 mt-0.5">
+                      User: <code className="text-emerald-300 font-mono">pharma_officer</code> • Pass: <code className="text-emerald-300 font-mono">pharma123</code>
                     </div>
                   </div>
                 </div>
@@ -249,12 +273,12 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Security & System Info Footer */}
-        <div className="mt-6 text-center text-xs text-slate-500 space-y-1">
+        <div className="mt-5 text-center text-xs text-slate-500 space-y-1">
           <p className="flex items-center justify-center gap-1.5">
             <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
-            Role-Based Access Control • Isolated Multi-Tenant Organizations
+            Unified Industrial AI Operations Platform
           </p>
-          <p>© 2026 Industrial Camera Safety Surveillance System</p>
+          <p>© 2026 Integrated Engineering Team Project</p>
         </div>
       </div>
     </div>

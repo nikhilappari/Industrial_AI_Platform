@@ -92,7 +92,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.app_name,
     version="1.0.0",
-    description="AI-powered PPE detection, safety-rule evaluation, risk scoring and real-time incident alerts",
+    description="Unified multi-module industrial intelligence suite: Vision safety, steel defect inspection, vehicle OBD-II diagnostics, semiconductor screening, and predictive maintenance",
     lifespan=lifespan,
 )
 
