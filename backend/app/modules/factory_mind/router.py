@@ -34,6 +34,10 @@ class MachineSensorInput(BaseModel):
     tool_wear: float = Field(30.0, description="Tool wear index (0-100)")
     torque: float = Field(42.0, description="Torque (Nm)")
     efficiency_pct: float = Field(88.0, description="Machine Efficiency %")
+    operating_hours: float = Field(250.0, description="Operating Hours")
+    machine_age_years: float = Field(3.0, description="Machine Age in Years")
+    maintenance_count: int = Field(2, description="Maintenance Count")
+    production_load: float = Field(85.0, description="Production Load %")
 
 
 @router.get("/fleet-status")
@@ -63,9 +67,13 @@ def predict_machine(input_data: MachineSensorInput):
             "Temperature": input_data.temperature,
             "Vibration": input_data.vibration,
             "Pressure": input_data.pressure,
-            "Speed": input_data.speed,
-            "Tool_Wear": input_data.tool_wear,
+            "Rotational_Speed": input_data.speed,
             "Torque": input_data.torque,
+            "Tool_Wear": input_data.tool_wear,
+            "Operating_Hours": input_data.operating_hours,
+            "Machine_Age_Years": input_data.machine_age_years,
+            "Maintenance_Count": input_data.maintenance_count,
+            "Production_Load": input_data.production_load,
         }
 
         # Predict failure probability

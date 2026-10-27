@@ -104,9 +104,9 @@ def predict_single(data: TelemetryInput):
     (pipeline, threshold, model_name, _), multi_model = get_models()
     result = predict_machine_health(validated, pipeline, threshold=threshold)
 
-    # If failure detected, check specific failure type
+    is_failure = result.get("failure_predicted", False)
     failure_type = "No Failure"
-    if result["is_failure"] and multi_model is not None:
+    if is_failure and multi_model is not None:
         try:
             df_raw = pd.DataFrame([validated])
             df_feat = engineer_features(df_raw)
@@ -114,6 +114,7 @@ def predict_single(data: TelemetryInput):
         except Exception:
             failure_type = "General Mechanical Anomaly"
 
+    result["is_failure"] = is_failure
     result["diagnosed_failure_type"] = failure_type
     result["model_used"] = model_name
     return result
