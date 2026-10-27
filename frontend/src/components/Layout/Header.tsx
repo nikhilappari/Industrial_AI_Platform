@@ -65,9 +65,9 @@ const Header = () => {
         <Shield className="text-cyan-400 w-8 h-8" />
         <div>
           <h1 className="text-lg font-bold tracking-wide flex items-center gap-2">
-            Industrial Safety Monitor
+            Industrial AI & Operations Platform
             <span className="text-xs font-normal px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300 border border-cyan-800">
-              Multi-Tenant AI
+              Unified Multi-Module Suite
             </span>
           </h1>
         </div>
