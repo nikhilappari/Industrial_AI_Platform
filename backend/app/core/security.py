@@ -24,12 +24,14 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     return encoded_jwt
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plain password against a hashed one."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a plain password against a hashed one with 72-byte safe guard."""
+    safe_pwd = plain_password[:72] if plain_password else ""
+    return pwd_context.verify(safe_pwd, hashed_password)
 
 def get_password_hash(password: str) -> str:
-    """Hash a password."""
-    return pwd_context.hash(password)
+    """Hash a password safely with 72-byte limit guard for bcrypt."""
+    safe_pwd = password[:72] if password else ""
+    return pwd_context.hash(safe_pwd)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/token", auto_error=False)
 
@@ -47,17 +49,12 @@ async def get_current_user(token: str | None = Depends(oauth2_scheme), db: Sessi
     )
     if not token:
         raise credentials_exception
-
     try:
         payload = jwt.decode(token, settings.secret_key, algorithms=[settings.algorithm])
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
     except JWTError:
-        if getattr(settings, 'app_env', 'development') == 'development':
-            admin_user = db.query(User).filter(User.username == "admin").first()
-            if admin_user:
-                return admin_user
         raise credentials_exception
         
     user = db.query(User).filter(User.username == username).first()
