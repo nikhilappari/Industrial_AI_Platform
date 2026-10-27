@@ -100,3 +100,27 @@ npm run dev
   - `GET /api/factorymind/fleet-status`: Factory fleet equipment overview
   - `POST /api/factorymind/predict`: Predict failure risk & maintenance recommendations
   - `POST /api/previsio/predict`: Physical sensor telemetry diagnostics
+
+
+---
+
+## 🚀 One-Click Cloud Deployment
+
+This platform is configured for **1-click cloud deployment** on Render, Railway, or any Docker-compatible cloud host.
+
+### Deploy on Render (Recommended & Free):
+
+1. Go to [dashboard.render.com](https://dashboard.render.com) and click **New +** -> **Blueprint**.
+2. Connect your GitHub repository: https://github.com/nikhilappari/Industrial_AI_Platform.
+3. Render will automatically detect 
+ender.yaml and configure the service.
+4. Click **Apply**.
+5. Once built, you receive a public URL (e.g. https://industrial-ai-platform.onrender.com) serving the full React UI, APIs, and sub-apps!
+
+### Deploy on Railway:
+
+1. Go to [railway.app](https://railway.app) and click **New Project** -> **Deploy from GitHub repo**.
+2. Select 
+ikhilappari/Industrial_AI_Platform.
+3. Railway will automatically build using the multi-stage Dockerfile.
+4. Under **Settings** -> **Networking**, click **Generate Domain** to get your public HTTPS URL.

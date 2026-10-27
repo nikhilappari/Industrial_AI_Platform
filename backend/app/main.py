@@ -112,7 +112,11 @@ if os.path.exists(settings.evidence_dir):
 
 @app.get("/")
 def root():
-    """Root endpoint with API information."""
+    """Root endpoint: serves frontend if built, or API info."""
+    index_file = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist", "index.html"))
+    if os.path.exists(index_file):
+        from fastapi.responses import FileResponse
+        return FileResponse(index_file)
     return {
         "app_name": settings.app_name,
         "version": "1.0.0",
@@ -252,3 +256,22 @@ try:
 
 except Exception as e:
     logger.warning(f"Could not set up websocket endpoint: {e}")
+
+
+# --- Static Frontend Serving for Production Deployments ---
+frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
+if os.path.exists(frontend_dist):
+    from fastapi import Request
+    from fastapi.responses import FileResponse, JSONResponse
+    from starlette.exceptions import HTTPException as StarletteHTTPException
+
+    @app.exception_handler(StarletteHTTPException)
+    async def custom_spa_404_handler(request: Request, exc: StarletteHTTPException):
+        if exc.status_code == 404:
+            index_path = os.path.join(frontend_dist, "index.html")
+            if os.path.exists(index_path) and not request.url.path.startswith(("/api", "/car-fault", "/ws")):
+                return FileResponse(index_path)
+        return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+    app.mount("/", StaticFiles(directory=frontend_dist, html=True), name="spa-frontend")
+    logger.info(f"Mounted production frontend from {frontend_dist}")
