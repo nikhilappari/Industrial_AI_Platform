@@ -20,7 +20,11 @@ class WebSocketService {
       return;
     }
 
-    this.ws = new WebSocket(`ws://localhost:8000/ws/monitoring/${this.sessionId}`);
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const host = (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1')
+      ? window.location.host
+      : 'localhost:8000';
+    this.ws = new WebSocket(`${protocol}//${host}/ws/monitoring/${this.sessionId}`);
 
     this.ws.onopen = () => {
       console.log('WebSocket connected');

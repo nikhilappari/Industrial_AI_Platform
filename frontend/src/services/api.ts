@@ -1,8 +1,15 @@
 import axios from 'axios';
 import { Camera, Incident, AnalyticsSummary, ModelStatus, Zone, MonitoringSession, Organization, SafetyProfile } from '../types';
 
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+    return '/api';
+  }
+  return 'http://localhost:8000/api';
+};
+
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: getBaseUrl(),
 });
 
 api.interceptors.request.use((config) => {
@@ -84,6 +91,13 @@ export const analyticsApi = {
   getTrends: (params?: any) => api.get('/analytics/trends', { params }),
   getByType: (params?: any) => api.get('/analytics/by-type', { params }),
   getByCamera: (params?: any) => api.get('/analytics/by-camera', { params }),
+};
+
+export const videosApi = {
+  detectFrame: (data: { frame_base64: string; camera_id?: number; required_ppe?: string[] }) =>
+    api.post('/videos/detect-frame', data),
+  upload: (formData: FormData) => api.post('/videos/upload', formData),
+  listUploads: () => api.get('/videos/uploads'),
 };
 
 export const modelsApi = {
