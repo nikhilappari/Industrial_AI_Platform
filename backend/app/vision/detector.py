@@ -17,42 +17,63 @@ class Detector(Protocol):
     def is_ready(self) -> bool: ...
     def get_model_info(self) -> dict: ...
 
+# Canonical map mapping model classes to platform standard classes
 CANONICAL_LABELS = {
-    'Hardhat': 'helmet', 'Safety Vest': 'vest', 'Mask': 'mask',
-    'NO-Hardhat': 'no_helmet', 'NO-Safety Vest': 'no_vest', 'NO-Mask': 'no_mask',
-    'Person': 'person', 'Safety Cone': 'safety_cone',
+    'Hardhat': 'helmet', 'Hard_hat': 'helmet', 'Helmet': 'helmet',
+    'Safety Vest': 'vest', 'Vest': 'vest',
+    'Mask': 'mask',
+    'NO-Hardhat': 'no_helmet', 'No-Helmet': 'no_helmet', 'No-Hard_hat': 'no_helmet',
+    'NO-Safety Vest': 'no_vest', 'No-Vest': 'no_vest',
+    'NO-Mask': 'no_mask', 'No-Mask': 'no_mask',
+    'Person': 'person', 'Worker': 'person',
+    'Safety Cone': 'safety_cone',
+    'Glove': 'gloves', 'gloves': 'gloves',
+    'No-Glove': 'no_gloves',
     'machinery': 'machinery', 'vehicle': 'vehicle'
 }
 
 class YOLOv8Detector:
     _instance = None
 
-    def __init__(self, repo_id: str, revision: Optional[str] = None, person_conf: float = 0.35, ppe_conf: float = 0.30):
+    def __init__(self, repo_id: str = "killuminati1/construction-ppe-yolov8", revision: Optional[str] = None, person_conf: float = 0.25, ppe_conf: float = 0.22):
         self.repo_id = repo_id
         self.revision = revision if revision else None
         self.person_conf = person_conf
         self.ppe_conf = ppe_conf
         self.model = None
+        self.fallback_model = None
         self.ready = False
         
+        # Load primary robust PPE model
         try:
             from huggingface_hub import hf_hub_download
             from ultralytics import YOLO
 
+            logger.info(f"Loading primary PPE detector: {self.repo_id}")
             model_path = hf_hub_download(repo_id=self.repo_id, filename="best.pt", revision=self.revision)
             self.model = YOLO(model_path)
             self.ready = True
-            logger.info(f"Loaded YOLO model from {model_path}")
+            logger.info(f"Primary YOLO model loaded from {model_path}")
         except Exception as e:
-            logger.error(f"Failed to load model: {e}")
-            self.ready = False
+            logger.error(f"Failed to load primary model {self.repo_id}: {e}")
+            try:
+                # Fallback to secondary model if network or repository unavailable
+                from huggingface_hub import hf_hub_download
+                from ultralytics import YOLO
+                fb_path = hf_hub_download(repo_id="Hansung-Cho/yolov8-ppe-detection", filename="best.pt")
+                self.model = YOLO(fb_path)
+                self.ready = True
+                logger.info(f"Loaded fallback model from {fb_path}")
+            except Exception as e2:
+                logger.error(f"Failed to load fallback model: {e2}")
+                self.ready = False
 
     def predict(self, frame: np.ndarray) -> list[DetectionResult]:
-        if not self.ready or self.model is None:
+        if not self.ready or self.model is None or frame is None:
             return []
         
-        # Run inference with generous threshold so masks, vests, and helmets are reliably captured
-        results = self.model(frame, conf=0.25, verbose=False)
+        # Run inference with sensitive threshold to catch PPE items accurately
+        results = self.model(frame, conf=0.18, verbose=False)
         detections = []
         for r in results:
             boxes = r.boxes
@@ -91,7 +112,7 @@ class YOLOv8Detector:
             "ready": self.ready
         }
 
-def get_detector(repo_id: str = "Hansung-Cho/yolov8-ppe-detection", revision: Optional[str] = None, person_conf: float = 0.35, ppe_conf: float = 0.30) -> YOLOv8Detector:
+def get_detector(repo_id: str = "killuminati1/construction-ppe-yolov8", revision: Optional[str] = None, person_conf: float = 0.25, ppe_conf: float = 0.22) -> YOLOv8Detector:
     if YOLOv8Detector._instance is None:
         YOLOv8Detector._instance = YOLOv8Detector(repo_id, revision, person_conf, ppe_conf)
     return YOLOv8Detector._instance
