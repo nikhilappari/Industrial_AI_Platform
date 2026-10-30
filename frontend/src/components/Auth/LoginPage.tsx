@@ -9,9 +9,6 @@ import {
   EyeOff, 
   AlertCircle, 
   ArrowRight, 
-  Building2, 
-  HardHat, 
-  Sparkles,
   CheckCircle2,
   Scan,
   Car,
@@ -21,8 +18,8 @@ import {
 } from 'lucide-react';
 
 export const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('admin');
+  const [password, setPassword] = useState('admin123');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,40 +62,23 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const handleQuickLogin = async (user: string, pass: string) => {
-    setUsername(user);
-    setPassword(pass);
-    try {
-      setIsSubmitting(true);
-      setError(null);
-      await login(user, pass);
-      const from = (location.state as any)?.from?.pathname || '/';
-      navigate(from, { replace: true });
-    } catch (err: any) {
-      console.error('Quick login error:', err);
-      setError(err?.response?.data?.detail || 'Login failed. Please check backend status.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 flex flex-col justify-center items-center p-4 sm:p-6 text-white select-none relative overflow-hidden">
       {/* Background ambient decorative glows */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="w-full max-w-lg relative z-10">
+      <div className="w-full max-w-md relative z-10">
         {/* Brand / Logo Header */}
         <div className="text-center mb-6">
           <div className="inline-flex items-center justify-center p-3.5 bg-gradient-to-b from-cyan-500/20 to-slate-800/80 border border-cyan-500/30 rounded-2xl shadow-lg shadow-cyan-950/50 mb-3 backdrop-blur-md">
             <Cpu className="w-10 h-10 text-cyan-400" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white flex items-center justify-center gap-2">
-            Industrial AI & Operations Platform
+            Industrial AI Platform
           </h1>
           <p className="text-xs text-cyan-400/90 font-semibold mt-1 tracking-wide">
-            Unified Multi-Module Suite · Safety, Quality, Fleet & Machinery Intelligence
+            Unified Suite · Safety, Quality, Fleet & Machinery Intelligence
           </p>
 
           {/* Module Pill Tags */}
@@ -126,7 +106,7 @@ export const LoginPage: React.FC = () => {
           <div className="mb-5">
             <h2 className="text-lg font-semibold text-white">Platform Sign In</h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              Enter your authorized credentials to access the unified operations suite
+              Enter your credentials to access the unified operations suite
             </p>
           </div>
 
@@ -150,7 +130,7 @@ export const LoginPage: React.FC = () => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="e.g. admin or pharma_officer"
+                  placeholder="admin"
                   disabled={isSubmitting}
                   className="w-full pl-10 pr-4 py-2.5 bg-slate-950/70 border border-slate-700 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 rounded-lg text-sm text-white placeholder-slate-500 outline-none transition-all disabled:opacity-50"
                   autoComplete="username"
@@ -196,79 +176,22 @@ export const LoginPage: React.FC = () => {
               {isSubmitting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Authenticating...</span>
+                  <span>Signing In...</span>
                 </>
               ) : (
                 <>
-                  <span>Enter Operations Portal</span>
+                  <span>Sign In</span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
             </button>
           </form>
 
-          {/* Quick Demo Accounts */}
-          <div className="mt-6 pt-5 border-t border-slate-800">
-            <div className="flex items-center gap-2 mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Quick Demo Access Roles</span>
-            </div>
-
-            <div className="space-y-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin', 'admin123')}
-                disabled={isSubmitting}
-                className="w-full text-left p-3 rounded-lg border border-slate-700/70 bg-slate-800/40 hover:bg-slate-800/80 hover:border-cyan-500/70 transition-all group flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-md bg-cyan-950/60 border border-cyan-800 text-cyan-400">
-                    <Shield className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-slate-200 group-hover:text-cyan-300">
-                      Operations Director / System Admin
-                    </div>
-                    <div className="text-[11px] text-slate-400 font-medium mt-0.5">
-                      Full access to all 5 AI modules + Administration
-                    </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">
-                      User: <code className="text-cyan-300 font-mono">admin</code> • Pass: <code className="text-cyan-300 font-mono">admin123</code>
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[11px] text-cyan-400 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                  Log in <ArrowRight className="w-3 h-3" />
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('pharma_officer', 'pharma123')}
-                disabled={isSubmitting}
-                className="w-full text-left p-3 rounded-lg border border-slate-700/70 bg-slate-800/40 hover:bg-slate-800/80 hover:border-emerald-500/70 transition-all group flex items-center justify-between"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-md bg-emerald-950/60 border border-emerald-800 text-emerald-400">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-slate-200 group-hover:text-emerald-300">
-                      Safety & Cleanroom QA Inspector
-                    </div>
-                    <div className="text-[11px] text-slate-400 font-medium mt-0.5">
-                      Pharma Cleanroom tenant profile (Mask + Gloves)
-                    </div>
-                    <div className="text-[10px] text-slate-500 mt-0.5">
-                      User: <code className="text-emerald-300 font-mono">pharma_officer</code> • Pass: <code className="text-emerald-300 font-mono">pharma123</code>
-                    </div>
-                  </div>
-                </div>
-                <span className="text-[11px] text-emerald-400 font-medium group-hover:translate-x-0.5 transition-transform flex items-center gap-1">
-                  Log in <ArrowRight className="w-3 h-3" />
-                </span>
-              </button>
-            </div>
+          {/* Single clean default credentials hint */}
+          <div className="mt-5 pt-4 border-t border-slate-800/80 text-center">
+            <p className="text-xs text-slate-400">
+              Default Credentials: <code className="text-cyan-300 font-mono font-semibold">admin</code> / <code className="text-cyan-300 font-mono font-semibold">admin123</code>
+            </p>
           </div>
         </div>
 
@@ -278,7 +201,6 @@ export const LoginPage: React.FC = () => {
             <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400" />
             Unified Industrial AI Operations Platform
           </p>
-          <p>© 2026 Integrated Engineering Team Project</p>
         </div>
       </div>
     </div>

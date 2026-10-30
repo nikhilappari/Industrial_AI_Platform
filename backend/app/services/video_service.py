@@ -107,11 +107,6 @@ class VideoProcessor:
         else:
             cap = cv2.VideoCapture(video_src)
 
-        if not cap.isOpened():
-            logger.warning(f"Camera {video_src} is not physically accessible. Automatically switching to Industrial Simulated Safety stream for session {self.session_id}")
-            self._run_simulated_stream(loop)
-            return
-            
         loop = getattr(SessionManager, 'main_loop', None)
         if loop is None or loop.is_closed():
             try:
@@ -120,16 +115,25 @@ class VideoProcessor:
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
 
+        if not cap.isOpened():
+            logger.warning(f"Camera {video_src} is not physically accessible. Automatically switching to Industrial Simulated Safety stream for session {self.session_id}")
+            self._run_simulated_stream(loop)
+            return
+
         try:
+            consecutive_failures = 0
             while self.running:
                 ret, frame = cap.read()
                 if not ret:
-                    if isinstance(video_src, int):
-                        # Webcam frame read glitch: retry slightly
-                        time.sleep(0.05)
-                        continue
-                    else:
-                        break
+                    consecutive_failures += 1
+                    if consecutive_failures > 15:
+                        logger.warning(f"Camera {video_src} failed to deliver frames. Falling back to Industrial Simulated Safety stream.")
+                        cap.release()
+                        self._run_simulated_stream(loop)
+                        return
+                    time.sleep(0.05)
+                    continue
+                consecutive_failures = 0
                     
                 if not self.frame_sampler.should_process(target_fps=self.settings.frame_sample_fps):
                     time.sleep(0.01)

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import DetectionOverlay from './DetectionOverlay';
 import { Detection } from '../../types';
 
@@ -15,7 +15,7 @@ const VideoFeed: React.FC<VideoFeedProps> = ({ frameData, detections }) => {
     return (
       <div className="text-white flex flex-col items-center">
         <div className="w-8 h-8 border-4 border-cyan-500 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p>Waiting for video feed...</p>
+        <p className="text-sm font-medium text-slate-300">Initializing neural video stream...</p>
       </div>
     );
   }
@@ -30,7 +30,7 @@ const VideoFeed: React.FC<VideoFeedProps> = ({ frameData, detections }) => {
       />
       <DetectionOverlay 
         detections={detections} 
-        imageElement={imgRef.current} 
+        targetElement={imgRef.current} 
         containerElement={containerRef.current}
       />
     </div>
