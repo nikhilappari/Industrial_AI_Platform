@@ -13,7 +13,8 @@ import {
   Scan,
   Car,
   Zap,
-  Wrench
+  Wrench,
+  Plane
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -34,6 +35,7 @@ const Sidebar = () => {
     { to: '/car-fault', label: 'Vehicle Fault Diagnosis', icon: Car, tag: 'OBD-II' },
     { to: '/aegis-burn', label: 'Semiconductor Burn-In', icon: Zap, tag: 'Silicon' },
     { to: '/predictive-maintenance', label: 'Predictive Maintenance', icon: Wrench, tag: 'Sensors' },
+    { to: '/aeroguard', label: 'AeroGuard Turbofan RUL', icon: Plane, tag: 'Aviation' },
   ];
 
   const handleLogout = () => {
@@ -82,62 +84,44 @@ const Sidebar = () => {
                 className={({ isActive }) =>
                   `flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                      ? 'bg-cyan-50 text-cyan-700 font-semibold'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   }`
                 }
               >
-                <div className="flex items-center gap-3 truncate">
+                <div className="flex items-center gap-3">
                   <item.icon className="w-4 h-4 shrink-0" />
-                  <span className="truncate">{item.label}</span>
+                  <span>{item.label}</span>
                 </div>
-                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-500">
-                  {item.tag}
-                </span>
+                {item.tag && (
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 font-mono">
+                    {item.tag}
+                  </span>
+                )}
               </NavLink>
             ))}
           </div>
         </div>
-
-        {/* System Administration */}
-        <div>
-          <p className="px-3 text-[11px] font-bold tracking-wider uppercase text-gray-400 mb-2">
-            System
-          </p>
-          <NavLink
-            to="/admin"
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-cyan-50 text-cyan-700 font-semibold'
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-              }`
-            }
-          >
-            <Settings className="w-4 h-4 shrink-0" />
-            Administration
-          </NavLink>
-        </div>
       </nav>
 
-      {/* Auth user footer */}
-      <div className="p-3.5 border-t border-gray-100 bg-gray-50/50">
+      {/* User / Logout Footer */}
+      <div className="p-4 border-t border-gray-200">
         {isAuthenticated && user ? (
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-xs shrink-0">
-                {user.username.slice(0, 2).toUpperCase()}
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center font-bold text-xs">
+                {user.username?.charAt(0).toUpperCase()}
               </div>
-              <div className="overflow-hidden">
-                <p className="text-xs font-semibold text-gray-800 truncate">{user.username}</p>
-                <p className="text-[11px] text-gray-500 capitalize truncate">
-                  {user.role.replace('_', ' ')}
+              <div className="text-xs">
+                <p className="font-semibold text-gray-800 truncate max-w-[120px]">
+                  {user.username}
                 </p>
+                <p className="text-gray-400 capitalize">{user.role?.replace('_', ' ')}</p>
               </div>
             </div>
             <button
               onClick={handleLogout}
-              className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+              className="text-gray-400 hover:text-rose-600 p-1 rounded-md transition-colors cursor-pointer"
               title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
@@ -146,10 +130,9 @@ const Sidebar = () => {
         ) : (
           <button
             onClick={() => navigate('/login')}
-            className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-medium text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 py-2 text-xs font-semibold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded-lg transition-colors cursor-pointer"
           >
-            <LogIn className="w-4 h-4" />
-            <span>Sign In</span>
+            <LogIn className="w-4 h-4" /> Sign In
           </button>
         )}
       </div>

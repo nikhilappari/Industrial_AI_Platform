@@ -9,6 +9,7 @@ import {
   Car, 
   Zap, 
   Wrench, 
+  Plane,
   ArrowRight, 
   ShieldCheck,
   Cpu
@@ -48,7 +49,7 @@ const Overview = () => {
       route: "/monitoring",
       icon: Video,
       color: "bg-cyan-50 text-cyan-600 border-cyan-200",
-      tag: "Lead Module"
+      tag: "Vision Safety"
     },
     {
       title: "Steel Defect Vision",
@@ -64,7 +65,7 @@ const Overview = () => {
       route: "/car-fault",
       icon: Car,
       color: "bg-indigo-50 text-indigo-600 border-indigo-200",
-      tag: "Fleet Health"
+      tag: "Fleet Telemetry"
     },
     {
       title: "Semiconductor Burn-In",
@@ -75,12 +76,20 @@ const Overview = () => {
       tag: "Silicon QA"
     },
     {
+      title: "Turbofan RUL (AeroGuard)",
+      description: "NASA C-MAPSS aircraft engine degradation & Remaining Useful Life prediction.",
+      route: "/aeroguard",
+      icon: Plane,
+      color: "bg-sky-50 text-sky-600 border-sky-200",
+      tag: "Aviation AI"
+    },
+    {
       title: "Predictive Maintenance",
       description: "Machine failure risk, AI4I root-cause diagnostics, and prescriptive actions.",
       route: "/predictive-maintenance",
       icon: Wrench,
       color: "bg-blue-50 text-blue-600 border-blue-200",
-      tag: "Machinery"
+      tag: "Machinery Fleet"
     }
   ];
 
@@ -98,131 +107,106 @@ const Overview = () => {
             <span className="text-xs text-slate-400">Version 2.0</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">
-            Industrial AI & Operations Platform
+            Industrial AI & Operations Suite
           </h1>
-          <p className="text-slate-300 text-sm mt-1.5 max-w-2xl">
-            Single-pane operational intelligence unifying workplace personnel safety, manufacturing defect vision, machinery predictive maintenance, and automotive telemetry.
+          <p className="text-slate-300 text-sm mt-1 max-w-2xl leading-relaxed">
+            Single-pane operations intelligence across computer vision PPE safety, steel defect inspection, vehicle OBD-II telemetry, semiconductor screening, turbofan RUL forecasting, and machinery predictive maintenance.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="p-3.5 rounded-xl bg-slate-800/80 border border-slate-700 flex items-center gap-3">
-            <div className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
-            <div>
-              <p className="text-xs text-slate-400 font-medium">Platform Status</p>
-              <p className="text-sm font-bold text-white">5 Modules Online</p>
-            </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-center">
+            <span className="text-xs text-slate-400 block font-medium">AI Engines</span>
+            <span className="text-xl font-bold text-cyan-400 font-mono">6 Online</span>
+          </div>
+          <div className="p-3 bg-slate-800/80 rounded-xl border border-slate-700 text-center">
+            <span className="text-xs text-slate-400 block font-medium">Platform Status</span>
+            <span className="text-xl font-bold text-emerald-400 flex items-center justify-center gap-1 font-mono">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              Nominal
+            </span>
           </div>
         </div>
       </div>
 
-      {/* Module Navigation Grid */}
+      {/* Integrated Modules Grid */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-bold text-gray-800 uppercase tracking-wider text-xs">
-            Integrated Industrial Modules
-          </h2>
-          <span className="text-xs text-gray-400 font-medium">Select a module to open full workbench</span>
+          <div>
+            <h2 className="text-base font-bold text-gray-800 uppercase tracking-wider text-xs">
+              Integrated Industrial AI Modules
+            </h2>
+            <p className="text-xs text-gray-500 mt-0.5">Select a module to launch its dedicated operational view</p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {modules.map((m) => (
             <div
-              key={m.title}
+              key={m.route}
               onClick={() => navigate(m.route)}
-              className="bg-white p-5 rounded-xl border border-gray-200 shadow-xs hover:shadow-md hover:border-indigo-400 transition-all cursor-pointer flex flex-col justify-between group"
+              className="card p-5 hover:border-cyan-500 hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-start justify-between mb-3">
                   <div className={`p-2.5 rounded-lg border ${m.color}`}>
                     <m.icon className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 font-mono">
                     {m.tag}
                   </span>
                 </div>
-                <h3 className="font-bold text-gray-900 text-sm group-hover:text-indigo-600 transition-colors">
+                <h3 className="font-bold text-gray-900 group-hover:text-cyan-600 transition-colors text-base">
                   {m.title}
                 </h3>
-                <p className="text-xs text-gray-500 mt-1.5 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-gray-500 mt-1 leading-relaxed">
                   {m.description}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-indigo-600 group-hover:translate-x-0.5 transition-transform">
+              <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-cyan-600 group-hover:text-cyan-700">
                 <span>Launch</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Platform Real-time Metrics */}
+      {/* Safety & Camera Live Telemetry */}
       <div>
-        <h2 className="text-base font-bold text-gray-800 mb-3 uppercase tracking-wider text-xs">
+        <h2 className="text-base font-bold text-gray-800 uppercase tracking-wider text-xs mb-3">
           Safety & Camera Live Monitoring Telemetry
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard title="Active Cameras" value={summary.total_cameras} icon={Video} color="cyan" />
-          <StatsCard title="Open Incidents" value={summary.open_incidents} icon={Activity} color="yellow" />
-          <StatsCard title="High Risk Incidents" value={summary.high_risk_incidents} icon={AlertOctagon} color="red" />
-          <StatsCard title="Active Sessions" value={summary.active_sessions} icon={CheckCircle2} color="green" />
+          <StatsCard 
+            title="Active Cameras" 
+            value={summary.total_cameras} 
+            icon={Video} 
+          />
+          <StatsCard 
+            title="Open Incidents" 
+            value={summary.open_incidents} 
+            icon={Activity} 
+          />
+          <StatsCard 
+            title="High Risk Incidents" 
+            value={summary.high_risk_incidents} 
+            icon={AlertOctagon} 
+            color="red" 
+          />
+          <StatsCard 
+            title="Vision Model Status" 
+            value={modelStatus?.is_ready ? "Operational" : "Offline"} 
+            icon={CheckCircle2} 
+            color={modelStatus?.is_ready ? "green" : "red"} 
+          />
         </div>
       </div>
 
-      {/* Charts & ML Readiness */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 card">
-          <h3 className="text-lg font-semibold mb-4 text-gray-800">Incident Trends (Last 7 Days)</h3>
-          <div className="h-80">
-            <IncidentTrendChart />
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div className="card">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">AI Model Readiness</h3>
-            {modelStatus ? (
-              <div className="space-y-3">
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-xs text-gray-500 font-medium">YOLOv8 PPE Vision</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
-                    modelStatus.is_ready ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'
-                  }`}>
-                    {modelStatus.is_ready ? 'Ready' : 'Offline'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-xs text-gray-500 font-medium">DefectVision (Steel)</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">
-                    Ready
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-xs text-gray-500 font-medium">Car Fault OBD-II</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">
-                    Ready
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-xs text-gray-500 font-medium">AegisBurn Semiconductor</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">
-                    Ready
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2">
-                  <span className="text-xs text-gray-500 font-medium">Predictive Maintenance</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full font-bold bg-emerald-100 text-emerald-700">
-                    Ready
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-400">Loading model states...</p>
-            )}
-          </div>
-        </div>
+      {/* Incident Analytics Chart */}
+      <div className="grid grid-cols-1 gap-6">
+        <IncidentTrendChart />
       </div>
     </div>
   );

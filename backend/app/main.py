@@ -233,6 +233,13 @@ except Exception as e:
     logger.warning(f"Could not import factory_mind router: {e}")
 
 try:
+    from app.modules.aeroguard.router import router as aeroguard_router
+    app.include_router(aeroguard_router)
+    logger.info("Registered AeroGuard router")
+except Exception as e:
+    logger.warning(f"Could not import aeroguard router: {e}")
+
+try:
     import sys
     from pathlib import Path
     car_fault_dir = str(Path(__file__).parent / "modules" / "car_fault")

@@ -17,6 +17,7 @@ import DefectVisionView from './components/DefectVision/DefectVisionView';
 import CarFaultView from './components/CarFault/CarFaultView';
 import AegisBurnView from './components/AegisBurn/AegisBurnView';
 import PredictiveMaintenanceView from './components/PredictiveMaintenance/PredictiveMaintenanceView';
+import AeroGuardView from './components/AeroGuard/AeroGuardView';
 
 function App() {
   return (
@@ -47,6 +48,7 @@ function App() {
           <Route path="car-fault" element={<CarFaultView />} />
           <Route path="aegis-burn" element={<AegisBurnView />} />
           <Route path="predictive-maintenance" element={<PredictiveMaintenanceView />} />
+          <Route path="aeroguard" element={<AeroGuardView />} />
 
           {/* Admin */}
           <Route path="admin" element={<AdminPanel />} />
