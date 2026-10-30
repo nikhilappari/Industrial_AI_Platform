@@ -7,35 +7,60 @@ interface DetectionOverlayProps {
   containerElement: HTMLDivElement | null;
 }
 
-const CLASS_COLORS: Record<string, string> = {
-  person: '#3b82f6',
-  Person: '#3b82f6',
-  helmet: '#22c55e',
-  Hardhat: '#22c55e',
-  no_helmet: '#ef4444',
-  'NO-Hardhat': '#ef4444',
-  vest: '#22c55e',
-  'Safety Vest': '#22c55e',
-  no_vest: '#ef4444',
-  'NO-Safety Vest': '#ef4444',
-  mask: '#22c55e',
-  Mask: '#22c55e',
-  no_mask: '#ef4444',
-  'NO-Mask': '#ef4444',
-  gloves: '#10b981',
-  no_gloves: '#ef4444',
-  safety_cone: '#f59e0b',
-  'Safety Cone': '#f59e0b',
-  machinery: '#8b5cf6',
-  vehicle: '#ec4899',
-};
+/**
+ * Color Scheme:
+ * Compliant Safety Gear (Mask, Vest, Helmet, Gloves) -> Vibrant Emerald Green (#10b981)
+ * Missing PPE / Violations (NO-Mask, NO-Hardhat, NO-Vest, etc.) -> High-Visibility Red (#ef4444)
+ * Detected Personnel / Workers -> High-Visibility Sky Blue (#0ea5e9)
+ * Machinery / Equipment -> Purple (#a855f7)
+ */
+export const getDetectionColor = (className: string): { border: string; bg: string; text: string } => {
+  const name = className.toLowerCase().trim();
 
-const getBadgeColor = (className: string): string => {
-  if (CLASS_COLORS[className]) return CLASS_COLORS[className];
-  const lower = className.toLowerCase();
-  if (lower.includes('no') || lower.includes('violat') || lower.includes('miss')) return '#ef4444';
-  if (lower.includes('safe') || lower.includes('helmet') || lower.includes('vest') || lower.includes('mask') || lower.includes('glove')) return '#22c55e';
-  return '#3b82f6';
+  // 1. Missing PPE / Safety Violations -> RED
+  if (
+    name.startsWith('no-') ||
+    name.startsWith('no_') ||
+    name.includes('missing') ||
+    name.includes('violation')
+  ) {
+    return {
+      border: '#ef4444', // Red-500
+      bg: '#dc2626',
+      text: '#ffffff'
+    };
+  }
+
+  // 2. Verified Compliant Safety Gear (Mask, Vest, Helmet, Hardhat, Gloves) -> GREEN
+  if (
+    name.includes('mask') ||
+    name.includes('vest') ||
+    name.includes('helmet') ||
+    name.includes('hardhat') ||
+    name.includes('glove') ||
+    name.includes('safe')
+  ) {
+    return {
+      border: '#10b981', // Emerald-500 (Clean Bright Green)
+      bg: '#059669',     // Emerald-600
+      text: '#ffffff'
+    };
+  }
+
+  // 3. Person / Worker -> SKY BLUE
+  if (name.includes('person') || name.includes('worker') || name.includes('operator')) {
+    return {
+      border: '#0ea5e9', // Sky-500
+      bg: '#0284c7',
+      text: '#ffffff'
+    };
+  }
+
+  // 4. Default / Hazard Cones / Vehicles
+  if (name.includes('cone')) {
+    return { border: '#f59e0b', bg: '#d97706', text: '#ffffff' };
+  }
+  return { border: '#8b5cf6', bg: '#7c3aed', text: '#ffffff' };
 };
 
 const DetectionOverlay: React.FC<DetectionOverlayProps> = ({ detections, targetElement, containerElement }) => {
@@ -86,7 +111,7 @@ const DetectionOverlay: React.FC<DetectionOverlayProps> = ({ detections, targetE
       if (!det.bbox || det.bbox.length < 4) return;
       const [rawXmin, rawYmin, rawXmax, rawYmax] = det.bbox;
 
-      // Check whether coordinates are normalized [0.0 - 1.0] or absolute pixels
+      // Coordinate normalization check
       const isNormalized = rawXmax <= 1.05 && rawYmax <= 1.05;
 
       const normXmin = isNormalized ? rawXmin : rawXmin / (naturalWidth || 640);
@@ -101,29 +126,50 @@ const DetectionOverlay: React.FC<DetectionOverlayProps> = ({ detections, targetE
 
       if (w <= 2 || h <= 2) return;
 
-      const color = getBadgeColor(det.class_name);
+      const colorScheme = getDetectionColor(det.class_name);
 
-      // Draw bounding box
-      ctx.strokeStyle = color;
+      // 1. Draw outer glowing boundary for high visibility
+      ctx.strokeStyle = colorScheme.border;
       ctx.lineWidth = 2.5;
       ctx.strokeRect(x, y, w, h);
 
-      // Label text
-      const cleanName = det.class_name.replace(/_/g, ' ');
-      const confPercent = Math.round((det.confidence || 0.9) * 100);
-      const label = det.track_id ? `#${det.track_id} ${cleanName} ${confPercent}%` : `${cleanName} ${confPercent}%`;
+      // Subtle filled highlight for PPE items
+      const isPpe = !det.class_name.toLowerCase().includes('person');
+      if (isPpe) {
+        ctx.fillStyle = colorScheme.border + '22'; // 15% opacity fill
+        ctx.fillRect(x, y, w, h);
+      }
 
-      ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
+      // 2. Format human-friendly label
+      let cleanName = det.class_name.replace(/_/g, ' ');
+      if (cleanName.toLowerCase() === 'hardhat' || cleanName.toLowerCase() === 'helmet') {
+        cleanName = 'Hardhat Helmet';
+      } else if (cleanName.toLowerCase() === 'mask') {
+        cleanName = 'Face Mask';
+      } else if (cleanName.toLowerCase() === 'vest' || cleanName.toLowerCase() === 'safety vest') {
+        cleanName = 'Safety Vest';
+      } else if (cleanName.toLowerCase() === 'no-hardhat' || cleanName.toLowerCase() === 'no-helmet' || cleanName.toLowerCase() === 'no_helmet') {
+        cleanName = 'NO Hardhat';
+      } else if (cleanName.toLowerCase() === 'no-mask' || cleanName.toLowerCase() === 'no_mask') {
+        cleanName = 'NO Face Mask';
+      } else if (cleanName.toLowerCase() === 'no-safety vest' || cleanName.toLowerCase() === 'no_vest') {
+        cleanName = 'NO Safety Vest';
+      }
+
+      const confPercent = Math.round((det.confidence || 0.9) * 100);
+      const label = det.track_id ? `#${det.track_id} ${cleanName} (${confPercent}%)` : `${cleanName} (${confPercent}%)`;
+
+      ctx.font = 'bold 11px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
       const textWidth = ctx.measureText(label).width;
       const tagHeight = 18;
       const tagY = y >= tagHeight ? y - tagHeight : y;
 
-      // Label background
-      ctx.fillStyle = color;
+      // Label background pill
+      ctx.fillStyle = colorScheme.bg;
       ctx.fillRect(x, tagY, textWidth + 10, tagHeight);
 
       // Label text
-      ctx.fillStyle = '#ffffff';
+      ctx.fillStyle = colorScheme.text;
       ctx.fillText(label, x + 5, tagY + 13);
     });
   }, [detections, dimensions, targetElement]);

@@ -146,7 +146,7 @@ export const LiveMonitoring = () => {
 
         const res = await videosApi.detectFrame({
           frame_base64: dataUrl,
-          required_ppe: ['helmet', 'vest']
+          required_ppe: ['helmet', 'vest', 'mask', 'gloves']
         });
 
         if (!isCancelled && res.data) {

@@ -27,7 +27,7 @@ CANONICAL_LABELS = {
 class YOLOv8Detector:
     _instance = None
 
-    def __init__(self, repo_id: str, revision: Optional[str] = None, person_conf: float = 0.35, ppe_conf: float = 0.40):
+    def __init__(self, repo_id: str, revision: Optional[str] = None, person_conf: float = 0.35, ppe_conf: float = 0.30):
         self.repo_id = repo_id
         self.revision = revision if revision else None
         self.person_conf = person_conf
@@ -51,7 +51,8 @@ class YOLOv8Detector:
         if not self.ready or self.model is None:
             return []
         
-        results = self.model(frame, verbose=False)
+        # Run inference with generous threshold so masks, vests, and helmets are reliably captured
+        results = self.model(frame, conf=0.25, verbose=False)
         detections = []
         for r in results:
             boxes = r.boxes
@@ -90,7 +91,7 @@ class YOLOv8Detector:
             "ready": self.ready
         }
 
-def get_detector(repo_id: str = "Hansung-Cho/yolov8-ppe-detection", revision: Optional[str] = None, person_conf: float = 0.35, ppe_conf: float = 0.40) -> YOLOv8Detector:
+def get_detector(repo_id: str = "Hansung-Cho/yolov8-ppe-detection", revision: Optional[str] = None, person_conf: float = 0.35, ppe_conf: float = 0.30) -> YOLOv8Detector:
     if YOLOv8Detector._instance is None:
         YOLOv8Detector._instance = YOLOv8Detector(repo_id, revision, person_conf, ppe_conf)
     return YOLOv8Detector._instance
